@@ -2,16 +2,15 @@ package com.example.jsonloader
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.jsonloader.databinding.Fragment1Binding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 
 
 class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
@@ -43,8 +42,8 @@ class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
             binding.pageNumber.setVisibility(View.VISIBLE)
             binding.goToPage.setVisibility(View.VISIBLE)
             binding.emailText.setVisibility(View.GONE)
-            binding.goToEmail.setVisibility(View.GONE)/*val viewPager = activity?.findViewById<ViewPager2>(R.id.viewPager)
-            viewPager?.setCurrentItem(9, false)*/
+            binding.goToEmail.setVisibility(View.GONE)
+            binding.pageNumber.setHint("page")
         }
 
         binding.goToPage.setOnClickListener {
@@ -56,9 +55,20 @@ class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
                     val pageNumber: Int = binding.pageNumber.getText().toString().toInt()
                     val viewPager = activity?.findViewById<ViewPager2>(R.id.viewPager)
                     viewPager?.setCurrentItem(pageNumber - 1, false)
-                } else {
                     binding.pageNumber.setVisibility(View.GONE)
                     binding.goToPage.setVisibility(View.GONE)
+                } else {
+                    activity?.runOnUiThread() {binding.emailText.clearFocus()
+                        binding.pageNumber.getText().clear()
+                        binding.pageNumber.setHint("page not found")
+                    }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        Thread.sleep(1000)
+                        activity?.runOnUiThread() {
+                            binding.pageNumber.setVisibility(View.GONE)
+                            binding.goToPage.setVisibility(View.GONE)
+                        }
+                    }
                 }
 
             } catch (e: Exception) {
@@ -74,10 +84,13 @@ class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
             binding.goToEmail.setVisibility(View.VISIBLE)
             binding.pageNumber.setVisibility(View.GONE)
             binding.goToPage.setVisibility(View.GONE)
+            binding.emailText.setHint("email")
+
 
         }
 
         binding.goToEmail.setOnClickListener {
+
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     if (binding.emailText.getText().toString() != null) {
@@ -100,24 +113,31 @@ class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
 
 
                         for (i in 0..49) {
-                            if ((firstUsers.get(i).email == email) || (secondUsers.get(i).email == email))
-
-                                {
+                            if ((firstUsers.get(i).email == email) || (secondUsers.get(i).email == email)) {
 
                                 page = i + 1
                                 if (page > 0) {
                                     activity?.runOnUiThread() {
-                                        binding.TV1.text = page.toString()
 
-                                        val viewPager = activity?.findViewById<ViewPager2>(R.id.viewPager)
+                                        val viewPager =
+                                            activity?.findViewById<ViewPager2>(R.id.viewPager)
                                         viewPager?.setCurrentItem(page - 1, false)
 
-
-
+                                        binding.emailText.setVisibility(View.GONE)
+                                        binding.goToEmail.setVisibility(View.GONE)
 
 
                                     }
                                 }
+                            }
+                            else {
+                                activity?.runOnUiThread() {binding.emailText.clearFocus()
+                                    binding.emailText.getText().clear()
+                                    binding.emailText.setHint("email not found")
+                                }
+                                Thread.sleep(1000)
+                                binding.emailText.setVisibility(View.GONE)
+                                binding.goToEmail.setVisibility(View.GONE)
                             }
                         }
                     }
@@ -178,6 +198,8 @@ class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
         setText()
 
     }
+
+
 
 
     companion object {
