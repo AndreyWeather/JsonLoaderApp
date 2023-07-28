@@ -50,7 +50,7 @@ class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
             try {
                 if ((binding.pageNumber.getText() != null) && (binding.pageNumber.getText()
                         .toString().toInt() > 0) && (binding.pageNumber.getText().toString()
-                        .toInt() < 50)
+                        .toInt() <= 50)
                 ) {
                     val pageNumber: Int = binding.pageNumber.getText().toString().toInt()
                     val viewPager = activity?.findViewById<ViewPager2>(R.id.viewPager)
@@ -108,20 +108,20 @@ class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
                         for (i in 1 until usersList.size step 2) {
                             secondUsers.add(usersList.get(i))
                         }
-                        var page = 0;
 
+                        var page = 0;
 
 
                         for (i in 0..49) {
                             if ((firstUsers.get(i).email == email) || (secondUsers.get(i).email == email)) {
 
-                                page = i + 1
+                                page = i
                                 if (page > 0) {
                                     activity?.runOnUiThread() {
 
                                         val viewPager =
                                             activity?.findViewById<ViewPager2>(R.id.viewPager)
-                                        viewPager?.setCurrentItem(page - 1, false)
+                                        viewPager?.setCurrentItem(page, false)
 
                                         binding.emailText.setVisibility(View.GONE)
                                         binding.goToEmail.setVisibility(View.GONE)
@@ -135,9 +135,13 @@ class Fragment1 constructor(_position: Int) : Fragment(R.layout.fragment1) {
                                     binding.emailText.getText().clear()
                                     binding.emailText.setHint("email not found")
                                 }
-                                Thread.sleep(1000)
-                                binding.emailText.setVisibility(View.GONE)
-                                binding.goToEmail.setVisibility(View.GONE)
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    Thread.sleep(1000)
+                                    activity?.runOnUiThread() {0
+                                        binding.emailText.setVisibility(View.GONE)
+                                        binding.goToEmail.setVisibility(View.GONE)
+                                    }
+                                }
                             }
                         }
                     }
