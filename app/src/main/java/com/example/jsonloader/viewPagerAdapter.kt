@@ -12,11 +12,8 @@ class viewPagerAdapter(f_activity: FragmentActivity, private val list: List<Frag
 
     }
 
-
-
-
     override fun createFragment(position: Int): Fragment {
 
-        return Fragment1(position)
+        return Fragment1.newInstance(position)
     }
 }

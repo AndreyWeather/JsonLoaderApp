@@ -2,14 +2,15 @@ package com.example.jsonloader
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import com.example.jsonloader.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
 
+    private val viewModel: viewModel by viewModels()
     private val fragList = listOf(
-        Fragment1.newInstance(),
-
+        Fragment1.newInstance(1),
         )
     private val fragPagesTitles = listOf(
         "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
@@ -22,8 +23,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val adapter = viewPagerAdapter(this, fragList)
